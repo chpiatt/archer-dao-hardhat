@@ -1,4 +1,10 @@
 require("@nomiclabs/hardhat-waffle");
+require("hardhat-deploy");
+require("hardhat-deploy-ethers");
+
+const FORK_URL = process.env.FORK_URL
+const FORK_BLOCK_NUMBER = process.env.FORK_BLOCK_NUMBER
+const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -22,8 +28,19 @@ module.exports = {
     hardhat: {
       chainId: 1,
       forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env['ALCHEMYIO_KEY']}`,
-        blockNumber: 11799831
+        url: FORK_URL,
+        blockNumber: parseInt(FORK_BLOCK_NUMBER)
+      }
+    },
+    localhost: {
+      chainId: 1,
+      url: 'http://localhost:8545',
+      live: false,
+      saveDeployments: true,
+      accounts: [DEPLOYER_PRIVATE_KEY], // Issue is here
+      forking: {
+        url: FORK_URL,
+        blockNumber: parseInt(FORK_BLOCK_NUMBER)
       }
     }
   }

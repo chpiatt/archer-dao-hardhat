@@ -1,4 +1,3 @@
-const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Archer DAO", function() {
@@ -6,12 +5,7 @@ describe("Archer DAO", function() {
     // the original address provided in the sample scrit throws `revert Prism::setPendingProxyImp: caller must be admin`
     // below code gets the actual admin address to impersonate so that `setPendingProxyImplementation` can pass
     const vppAddress = '0x000100bB517E0c003200502A822083000a3B005d'; // contract address
-    const sAt = await ethers.provider.getStorageAt(vppAddress,
-      ethers.utils.keccak256(ethers.utils.toUtf8Bytes("prism.proxy.storage"))
-    );
-    const abiCoder = new ethers.utils.AbiCoder();
-    const accountToImpersonate = abiCoder.decode(['address'], sAt)[0];
-    console.log(`admin account`, accountToImpersonate);
+    const accountToImpersonate = '0x13d5b8fc84f73fc5a0a5832aa8373044371314d3'
 
     // need to fund the accountToImpersonate with some eth
     const minerAccount = '0x04668ec2f57cc15c381b461b9fedab5d451c8f7f';
@@ -27,7 +21,7 @@ describe("Archer DAO", function() {
     await ethers.provider.send('hardhat_impersonateAccount', [accountToImpersonate]);
     const admin = await ethers.provider.getSigner(accountToImpersonate);
     const VotingPowerPrism = await ethers.getContractAt('VotingPowerPrism', vppAddress, admin);
-    await VotingPowerPrism.setPendingProxyImplementation(accountToImpersonate);
+    await VotingPowerPrism.connect(admin).setPendingProxyImplementation(accountToImpersonate);
     console.log('I THINK I DID SMTH :)');
   });
 });
